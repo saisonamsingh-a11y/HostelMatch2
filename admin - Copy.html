@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HostelMatch Admin – Mumbai Hostel Directory Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0F172A;--paper:#F8FAFC;--card:#fff;--teal:#0D9488;--amber:#F59E0B;--red:#EF4444;--line:#E2E8F0;--mute:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font:15px/1.5 'Plus Jakarta Sans',system-ui,sans-serif}
+header{background:var(--ink);color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:1.4rem;font-weight:800;font-family:'Space Grotesk',sans-serif}
+header a{color:#94A3B8;text-decoration:none;font-weight:600;font-size:0.9rem}
+header a:hover{color:#fff}
+.wrap{max-width:1200px;margin:24px auto;padding:0 20px;display:grid;grid-template-columns:420px 1fr;gap:24px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
+h2{margin-bottom:16px;font-size:1.2rem;font-weight:800}
+label{display:block;font-weight:700;margin:10px 0 4px;font-size:.82rem;color:var(--ink);text-transform:uppercase;letter-spacing:0.03em}
+input[type=text],input[type=number],input[type=password],input[type=tel],input[type=url],textarea,select{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#F8FAFC;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--teal);background:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chips label{position:relative;margin:0;text-transform:none}
+.chips input{position:absolute;opacity:0}
+.chips span{display:inline-block;padding:4px 10px;border:1px solid var(--line);border-radius:99px;cursor:pointer;font-size:.8rem;font-weight:600;background:#F8FAFC}
+.chips input:checked+span{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn{background:var(--ink);color:#fff;border:0;border-radius:8px;padding:11px 16px;font-weight:700;font-size:0.92rem;width:100%;margin-top:16px;cursor:pointer}
+.btn:hover{background:#1E293B}
+.btn-danger{background:var(--red)}
+.h-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:#F8FAFC}
+.h-item strong{font-size:0.95rem;color:var(--ink)}
+.h-item small{color:var(--mute);font-size:0.8rem;display:block;margin-top:2px}
+.msg{padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:.88rem;display:none;font-weight:600}
+.msg.err{background:#FEE2E2;color:var(--red)}.msg.ok{background:#D1FAE5;color:var(--teal)}
+</style>
+</head>
+<body>
+<header>
+ <div>
+  <h1>HostelMatch Admin</h1>
+  <div style="font-size:0.75rem;color:#94A3B8">Real-time Mumbai Hostels Directory Editor</div>
+ </div>
+ <a href="/">← Back to Main App</a>
+</header>
+
+<div class="wrap">
+ <div class="box">
+  <h2>Hostel & PG Editor</h2>
+  <div id="status" class="msg"></div>
+  <form id="af">
+   <input type="hidden" id="hid">
+   
+   <label for="ak">Admin Authorization Key</label>
+   <input type="password" id="ak" value="change-me" required>
+   
+   <label for="name">Hostel / PG Name</label>
+   <input type="text" id="name" required placeholder="e.g. Shri Mahavira Jaina Vidyalaya">
+   
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div>
+     <label for="area">Area / Locality</label>
+     <input type="text" id="area" placeholder="e.g. Andheri West" required>
+    </div>
+    <div>
+     <label for="phone">Phone Number</label>
+     <input type="tel" id="phone" placeholder="022-26250376" required>
+    </div>
+   </div>
+
+   <label for="addr">Full Street Address</label>
+   <input type="text" id="addr" placeholder="e.g. C.D. Barfiwala Road, Andheri West, Mumbai 400058">
+
+   <label for="colleges">Nearby Colleges</label>
+   <input type="text" id="colleges" placeholder="e.g. Bhavan's, SPIT, Mithibai, NMIMS">
+
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div>
+     <label for="gender">Gender Allowed</label>
+     <select id="gender">
+      <option value="coed">Co-Ed</option>
+      <option value="girls">Girls Only</option>
+      <option value="boys">Boys Only</option>
+     </select>
+    </div>
+    <div>
+     <label for="food">Dietary / Food</label>
+     <select id="food">
+      <option value="jain">Strict Jain Food</option>
+      <option value="pure_veg" selected>Pure Vegetarian</option>
+      <option value="veg_nonveg">Veg & Non-Veg</option>
+     </select>
+    </div>
+   </div>
+
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div>
+     <label for="lat">Latitude</label>
+     <input type="number" id="lat" step="0.0001" placeholder="19.1205" required>
+    </div>
+    <div>
+     <label for="lng">Longitude</label>
+     <input type="number" id="lng" step="0.0001" placeholder="72.8402" required>
+    </div>
+   </div>
+
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div>
+     <label for="rating">Rating (0-5)</label>
+     <input type="number" id="rating" step="0.1" min="0" max="5" value="4.5" required>
+    </div>
+    <div>
+     <label for="safety">Safety Score (0-5)</label>
+     <input type="number" id="safety" step="0.1" min="0" max="5" value="4.8" required>
+    </div>
+   </div>
+   
+   <label>Room Rates (₹/mo)</label>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <input type="number" id="r_single" placeholder="Single bed (₹)">
+    <input type="number" id="r_double" placeholder="Double bed (₹)">
+    <input type="number" id="r_triple" placeholder="Triple bed (₹)">
+    <input type="number" id="r_dorm" placeholder="Dorm bed (₹)">
+   </div>
+   
+   <label>Amenities Offered</label>
+   <div class="chips">
+    <label><input type="checkbox" name="a_am" value="wifi"><span>WiFi</span></label>
+    <label><input type="checkbox" name="a_am" value="ac"><span>AC</span></label>
+    <label><input type="checkbox" name="a_am" value="meals"><span>Meals</span></label>
+    <label><input type="checkbox" name="a_am" value="laundry"><span>Laundry</span></label>
+    <label><input type="checkbox" name="a_am" value="gym"><span>Gym</span></label>
+    <label><input type="checkbox" name="a_am" value="study_room"><span>Study room</span></label>
+    <label><input type="checkbox" name="a_am" value="power_backup"><span>Power backup</span></label>
+    <label><input type="checkbox" name="a_am" value="security"><span>Security</span></label>
+   </div>
+   
+   <label for="web">Website / Reference URL</label>
+   <input type="url" id="web" placeholder="https://smjv.org/">
+
+   <label for="about">About Description</label>
+   <textarea id="about" rows="3" placeholder="Brief description of rules, atmosphere, and amenities..."></textarea>
+   
+   <button type="submit" class="btn" id="sbtn" style="background:var(--teal)">Save Hostel</button>
+   <button type="button" class="btn" style="background:var(--mute);margin-top:8px" onclick="resetForm()">Clear Form</button>
+  </form>
+ </div>
+ 
+ <div class="box">
+  <h2>Mumbai Hostels & PGs Directory</h2>
+  <div id="hlist">Loading verified hostels...</div>
+ </div>
+</div>
+
+<script>
+const ROOMS=["single", "double", "triple", "dorm"];
+const $=id=>document.getElementById(id);
+const status=(txt,err=false)=>{
+ const s=$("status");
+ s.textContent=txt;
+ s.className="msg "+(err?"err":"ok");
+ s.style.display="block";
+ setTimeout(()=>s.style.display="none",4000);
+};
+
+async function loadHostels(){
+ const d=await(await fetch("/api/hostels")).json();
+ $("hlist").innerHTML=(d.results||[]).map(h=>`
+  <div class="h-item">
+   <div style="flex:1">
+    <strong>${h.name}</strong> (${h.area})<br>
+    <small>📍 ${h.address || h.area} · 📞 ${h.phone}</small>
+    <small>🥗 ${h.food || 'pure_veg'} · 👥 ${h.gender} · ★ ${h.rating} · Rates: ${Object.entries(h.rooms).map(([k,v])=>k+': ₹'+v).join(', ')}</small>
+   </div>
+   <div style="display:flex;gap:6px;margin-left:10px">
+    <button onclick="editH(${h.id})" style="padding:6px 10px;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:#fff">Edit</button>
+    <button onclick="delH(${h.id})" style="padding:6px 10px;cursor:pointer;border-radius:6px;border:1px solid var(--red);color:var(--red);background:#fff">Delete</button>
+   </div>
+  </div>
+ `).join("") || "<p>No hostels found.</p>";
+}
+
+async function editH(id){
+ const h=await(await fetch("/api/hostels/"+id)).json();
+ $("hid").value=h.id;
+ $("name").value=h.name;
+ $("area").value=h.area;
+ $("phone").value=h.phone||"";
+ $("addr").value=h.address||"";
+ $("colleges").value=h.nearby_colleges||"";
+ $("gender").value=h.gender||"coed";
+ $("food").value=h.food||"pure_veg";
+ $("lat").value=h.lat||"";
+ $("lng").value=h.lng||"";
+ $("rating").value=h.rating;
+ $("safety").value=h.safety_score||4.5;
+ $("web").value=h.website||"";
+ $("about").value=h.about||"";
+ ROOMS.forEach(r=>$("r_"+r).value=h.rooms[r]||"");
+ document.querySelectorAll('input[name="a_am"]').forEach(cb=>{
+  cb.checked=(h.amenities||[]).includes(cb.value);
+ });
+ $("sbtn").textContent="Update Hostel #"+h.id;
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetForm(){
+ $("hid").value="";
+ $("af").reset();
+ $("sbtn").textContent="Save Hostel";
+}
+
+async function delH(id){
+ if(!confirm("Delete hostel #"+id+"?")) return;
+ const res=await fetch("/api/admin/hostels/"+id,{
+  method:"DELETE",
+  headers:{"X-Admin-Key":$("ak").value}
+ });
+ const d=await res.json();
+ if(res.ok){ status("Hostel deleted successfully"); loadHostels(); resetForm(); }
+ else{ status(d.error||"Failed to delete",true); }
+}
+
+$("af").onsubmit=async e=>{
+ e.preventDefault();
+ const hid=$("hid").value;
+ const rooms={};
+ ROOMS.forEach(r=>{
+  const val=+$("r_"+r).value;
+  if(val>0) rooms[r]=val;
+ });
+ const ams=[...document.querySelectorAll('input[name="a_am"]:checked')].map(cb=>cb.value);
+ const body={
+  name: $("name").value,
+  area: $("area").value,
+  phone: $("phone").value,
+  address: $("addr").value,
+  nearby_colleges: $("colleges").value,
+  gender: $("gender").value,
+  food: $("food").value,
+  lat: +$("lat").value,
+  lng: +$("lng").value,
+  rating: +$("rating").value,
+  safety_score: +$("safety").value,
+  website: $("web").value,
+  distance_km: 1.0,
+  rooms: rooms,
+  amenities: ams,
+  about: $("about").value
+ };
+ 
+ const url=hid?"/api/admin/hostels/"+hid:"/api/admin/hostels";
+ const method=hid?"PUT":"POST";
+ 
+ const res=await fetch(url,{
+  method:method,
+  headers:{"Content-Type":"application/json","X-Admin-Key":$("ak").value},
+  body:JSON.stringify(body)
+ });
+ const d=await res.json();
+ if(res.ok){
+  status(hid?"Hostel updated successfully!":"Hostel added successfully!");
+  resetForm();
+  loadHostels();
+ }else{
+  status(d.error||"Error saving hostel",true);
+ }
+};
+
+loadHostels();
+</script>
+</body>
+</html>
